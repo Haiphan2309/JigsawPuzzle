@@ -7,11 +7,24 @@ using UnityEngine;
 public class PuzzlePiece : MonoBehaviour
 {
     public PuzzlePieceInfo info;
+    [SerializeField] Vector2 defaultPos;
+    public void SetDefaultPos(Vector2 pos)
+    {
+        defaultPos = pos;
+    }
     public void Setup()
     {
         info.id = transform.GetSiblingIndex();
         info.pieceId = GetComponent<SpriteRenderer>().sprite.ToString();
         info.rotateAngle = (int)transform.localRotation.eulerAngles.z;
+    }
+    private void OnMouseDown()
+    {
+        TablePiece tablePiece = Table.Instance.CheckMatch(transform.position, info, false);
+        if (tablePiece != null)
+        {
+            tablePiece.SetCurrentPiece(null);
+        }
     }
     private void OnMouseDrag()
     {
@@ -20,10 +33,16 @@ public class PuzzlePiece : MonoBehaviour
     }
     private void OnMouseUp()
     {
-        TablePiece tablePiece = Table.Instance.CheckMatch(transform.position, info);
+        TablePiece tablePiece = Table.Instance.CheckMatch(transform.position, info, true);
         if (tablePiece != null)
         {
             transform.position = tablePiece.transform.position;
+            tablePiece.SetCurrentPiece(this);
+            Table.Instance.CheckWin();
+        }
+        else
+        {
+            transform.DOMove(defaultPos, 0.5f);
         }
     }
 }

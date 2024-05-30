@@ -30,7 +30,9 @@ public class PiecesController : MonoBehaviour
         yield return new WaitForSeconds(1);
         for (int i = 0; i < transform.childCount; i++)
         {
-            transform.GetChild(i).DOMove(puzzleInitTable.transform.GetChild(i).position,0.5f);
+            Vector2 puzzleInitPos = puzzleInitTable.transform.GetChild(i).position;
+            transform.GetChild(i).GetComponent<PuzzlePiece>().SetDefaultPos(puzzleInitPos);
+            transform.GetChild(i).DOMove(puzzleInitPos,0.5f);
         }
     }
 }
